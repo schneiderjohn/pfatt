@@ -238,4 +238,3 @@ else
   /usr/bin/logger -st "pfatt" "error: unknown EAP_MODE. '$EAP_MODE' is not valid. exiting..."
   exit 1
 fi
-fi
