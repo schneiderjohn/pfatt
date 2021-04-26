@@ -208,8 +208,8 @@ elif [ "$EAP_MODE" = "supplicant" ] ; then
 
   /usr/bin/logger -st "pfatt" "waiting EAP for authorization..."
 
-  # TODO: blocking for bootup
-  while true;
+  # Check for DHCP Auth
+  while [ $DHCP_ATTEMPTS -lt 15 ];
   do
     WPA_STATUS=$(eval ${WPA_STATUS_CMD})
     if [ X${WPA_STATUS} = X"Authorized" ];
@@ -227,7 +227,9 @@ elif [ "$EAP_MODE" = "supplicant" ] ; then
       /usr/bin/logger -st "pfatt" "IP address is ${IP_STATUS}..."
       break
     else
-      sleep 1
+	DHCP_ATTEMPTS=`expr $DHCP_ATTEMPTS + 1`
+	/usr/bin/logger -st "opnatt" "DHCP has failed ${DHCP_ATTEMPTS} times"
+	sleep 2
     fi
   done
   /usr/bin/logger -st "pfatt" "ngeth0 should now be available to configure as your WAN..."
@@ -235,4 +237,5 @@ elif [ "$EAP_MODE" = "supplicant" ] ; then
 else
   /usr/bin/logger -st "pfatt" "error: unknown EAP_MODE. '$EAP_MODE' is not valid. exiting..."
   exit 1
+fi
 fi
